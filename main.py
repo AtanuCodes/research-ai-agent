@@ -16,7 +16,7 @@ class ResearchResponse(BaseModel):
     tools_used: list[str]
 
 
-llm = ChatGroq(model="llama3-70b-8192")  
+llm = ChatGroq(model="qwen/qwen3-32b")  
 parser = PydanticOutputParser(pydantic_object=ResearchResponse)
 
 prompt = ChatPromptTemplate.from_messages(
