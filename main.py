@@ -67,7 +67,7 @@ if __name__ == "__main__":
         print("\n=== Research Completed ===\n")
         print(structured_response)
 
-        # Optional: Auto-save if user mentioned saving
+        # Auto-save if user mentioned saving
         if any(word in query.lower() for word in ["save", "file", "txt"]):
             from tools import save_to_txt
             save_result = save_to_txt(
