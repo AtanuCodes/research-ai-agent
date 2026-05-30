@@ -37,7 +37,15 @@ prompt = ChatPromptTemplate.from_messages(
 
 tools = [search_tool, wiki_tool, save_tool]
 agent = create_tool_calling_agent(llm=llm, prompt=prompt, tools=tools)
-agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+# agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+
+agent_executor = AgentExecutor(
+    agent=agent,
+    tools=tools,
+    verbose=True,
+    handle_parsing_errors=True,  
+    max_iterations=5,            
+)
 
 query = input("What can I help you research? ")
 raw_response = agent_executor.invoke({"query": query})

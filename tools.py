@@ -1,16 +1,17 @@
-from langchain_community.tools import WikipediaQueryRun, DuckDuckGoSearchRun
+from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_community.utilities import WikipediaAPIWrapper
+from langchain_community.tools import WikipediaQueryRun
 from langchain.tools import Tool
 from datetime import datetime
+
 
 def save_to_txt(data: str, filename: str = "research_output.txt"):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     formatted_text = f"--- Research Output ---\nTimestamp: {timestamp}\n\n{data}\n\n"
-
     with open(filename, "a", encoding="utf-8") as f:
         f.write(formatted_text)
-    
     return f"Data successfully saved to {filename}"
+
 
 save_tool = Tool(
     name="save_text_to_file",
@@ -25,5 +26,17 @@ search_tool = Tool(
     description="Search the web for information",
 )
 
-api_wrapper = WikipediaAPIWrapper(top_k_results=1, doc_content_chars_max=100)
-wiki_tool = WikipediaQueryRun(api_wrapper=api_wrapper)
+api_wrapper = WikipediaAPIWrapper(top_k_results=1, doc_content_chars_max=500)
+_wiki_tool_raw = WikipediaQueryRun(api_wrapper=api_wrapper)
+
+def safe_wiki_search(query: str) -> str:
+    try:
+        return _wiki_tool_raw.run(query)
+    except Exception as e:
+        return f"Wikipedia unavailable, use search tool instead. Error: {str(e)}"
+
+wiki_tool = Tool(
+    name="wikipedia",
+    func=safe_wiki_search,
+    description="Search Wikipedia for factual information about topics.",
+)
